@@ -17,3 +17,10 @@ Analysis To be Peformed
 Graph Generation 
 
 Report
+
+# Dataset Details
+The folder BlogsAll contains the set of 100 authors which have 100 articles each. This is a subset of the complete dataset.
+We will use this dataset for experiments with different configurations i.e. Different number of authors for attribution.
+
+NN.py is the script for extracting the feautre set called Basic-9. (https://www1.icsi.berkeley.edu/~sadia/papers/adversarial_stylometry.pdf)
+writperintsStatic.py is the script for extracting the feature set called Writeprints Static (https://www1.icsi.berkeley.edu/~sadia/papers/adversarial_stylometry.pdf).
