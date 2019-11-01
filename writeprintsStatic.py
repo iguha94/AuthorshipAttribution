@@ -61,13 +61,13 @@ def frequencyOfLetters(inputText):
                 charsFrequencyDict[char] = charsFrequencyDict[char] + 1
 
     # making a vector out of the frequencies
-    vectorOfFrequencies = [0] * len(characters)
-    totalCount = sum(list(charsFrequencyDict.values()))
-    for c in range(0, len(characters)):
-        char = characters[c]
-        vectorOfFrequencies[c] = charsFrequencyDict[char] / totalCount
+    # vectorOfFrequencies = [0] * len(characters)
+    # totalCount = sum(list(charsFrequencyDict.values()))
+    # for c in range(0, len(characters)):
+    #     char = characters[c]
+    #     vectorOfFrequencies[c] = charsFrequencyDict[char] / totalCount
 
-    return vectorOfFrequencies
+    return charsFrequencyDict
 
 
 def mostCommonLetterBigrams(inputText):
@@ -97,7 +97,7 @@ def mostCommonLetterBigrams(inputText):
     for t in bigrams:
         bigramsFrequency.append(float(bigramCounts[t] / totalCount))
 
-    return bigramsFrequency
+    return bigramCounts
 
 
 def mostCommonLetterTrigrams(inputText):
@@ -125,7 +125,7 @@ def mostCommonLetterTrigrams(inputText):
     for t in trigrams:
         trigramsFrequency.append(float(trigramCounts[t] / totalCount))
 
-    return trigramsFrequency
+    return trigramCounts
 
 
 def digitsPercentage(inputText):
@@ -176,9 +176,7 @@ def frequencyOfDigits(inputText):
     for digit in alldigits:
         digitsCounts[digit] += 1
 
-    digitsCounts = SortedDict(digitsCounts)
-    digitsCounts = np.array(digitsCounts.values())
-    return np.divide(digitsCounts, charactersCount(inputText))
+    return digitsCounts
 
 def frequencyOfDigitsNumbers(inputText, digitLength):
     '''
@@ -230,39 +228,39 @@ def frequencyOfSpecialCharacters(inputText):
     specialCharactersFrequencyDict = {}
     for c in range(0, len(specialCharacters)):
         specialChar = specialCharacters[c]
+
         specialCharactersFrequencyDict[specialChar] = 0
         for i in str(inputText):
             if specialChar == i:
                 specialCharactersFrequencyDict[specialChar] = specialCharactersFrequencyDict[specialChar] + 1
 
-
-    # making a vector out of the frequencies
-    vectorOfFrequencies = [0] * len(specialCharacters)
-    totalCount = sum(list(specialCharactersFrequencyDict.values())) + 1
-    for c in range(0, len(specialCharacters)):
-        specialChar = specialCharacters[c]
-        vectorOfFrequencies[c] = specialCharactersFrequencyDict[specialChar] / totalCount
-
-    vectorOfFrequencies = np.array(vectorOfFrequencies)
-    return vectorOfFrequencies
+    #
+    # # making a vector out of the frequencies
+    # vectorOfFrequencies = [0] * len(specialCharacters)
+    # totalCount = sum(list(specialCharactersFrequencyDict.values())) + 1
+    # for c in range(0, len(specialCharacters)):
+    #     specialChar = specialCharacters[c]
+    #     vectorOfFrequencies[c] = specialCharactersFrequencyDict[specialChar] / totalCount
+    #
+    # vectorOfFrequencies = np.array(vectorOfFrequencies)
+    return specialCharactersFrequencyDict
 
 
 def functionWordsPercentage(inputText):
     functionWords = open(cur_dir_path + "writeprintresources/functionWord.txt", "r").readlines()
     functionWords = [f.strip("\n") for f in functionWords]
     # print((functionWords))
+    functionWordsFrequencyDict = {}
+
     words = text.text_to_word_sequence(inputText, filters=' !#$%&()*+,-./:;<=>?@[\\]^_{|}~\t\n"', lower=True, split=" ")
-    frequencyOfFunctionWords = []
     for i in range(len(functionWords)):
         functionWord = functionWords[i]
-        freq = 0
+        functionWordsFrequencyDict[functionWord] = 0
         for word in words:
             if word == functionWord:
-                freq+=1
-        frequencyOfFunctionWords.append(freq)
-    # functionWordsIntersection = set(words).intersection(set(functionWords))
+                functionWordsFrequencyDict[functionWord] += 1
 
-    return frequencyOfFunctionWords
+    return functionWordsFrequencyDict
 
 
 def frequencyOfPunctuationCharacters(inputText):
@@ -289,7 +287,7 @@ def frequencyOfPunctuationCharacters(inputText):
         specialChar = specialCharacters[c]
         vectorOfFrequencies[c] = specialCharactersFrequencyDict[specialChar] / totalCount
 
-    return vectorOfFrequencies
+    return specialCharactersFrequencyDict
 
 
 def misSpellingsPercentage(inputText):
@@ -305,9 +303,10 @@ def legomena(inputText):
     hapax = [key for key, val in freq.items() if val == 1]
     dis = [key for key, val in freq.items() if val == 2]
     try:
-        return list((len(hapax) / len(inputText.split()),len(dis)/ len(inputText.split())))
+        res = {'legomena': (len(hapax) / len(inputText.split())), 'dis_legomena': (len(dis)/ len(inputText.split()))}
+        return res
     except:
-        return [0,0]
+        return {'legomena': 0, 'dis_legomena': 0}
 
 
 def posTagFrequency(inputText):
@@ -319,7 +318,11 @@ def posTagFrequency(inputText):
     # tagset = ['ADJ', 'ADP', 'ADV', 'CONJ', 'DET', 'NOUN', 'NUM', 'PRT', 'PRON', 'VERB', '.', 'X']
     tagset = ['ADJ', 'ADP', 'ADV','AUX', 'CONJ','CCONJ', 'DET', 'INTJ', 'NOUN', 'NUM', 'PART', 'PRON', 'PROPN', 'PUNCT', 'SCONJ', 'SYM', 'VERB', 'SPACE', 'X']
     tags = [tag for tag in pos_tags]
-    return list(tuple(tags.count(tag) / len(tags) for tag in tagset))
+
+    tags_percentage = {}
+    for tag in tagset:
+        tags_percentage[tag] = tags.count(tag)
+    return tags_percentage
 
 def totalWords(inputText):
     words = text.text_to_word_sequence(inputText, filters=",.?!\"'`;:-()&$", lower=True, split=" ")
@@ -343,34 +346,36 @@ def noOfShortWords(inputText):
 def calculateFeatures(inputText):
 
 
-    featureList = []
+    featureList = {}
 
     ## GROUP 1
-    featureList.extend([totalWords(inputText)])
-    featureList.extend([averageWordLength(inputText)])
-    featureList.extend([noOfShortWords(inputText)])
+    featureList['total_words'] = totalWords(inputText)
+    featureList['average_word_length'] = averageWordLength(inputText)
+    featureList['no_of_short_words'] = noOfShortWords(inputText)
     ## GROUP 2
-    featureList.extend([charactersCount(inputText)])
-    featureList.extend([digitsPercentage(inputText)])
-    featureList.extend([upperCaseCharactersPercentage(inputText)])
+    featureList['characters_count'] = charactersCount(inputText)
+    featureList['digits_percentage'] = digitsPercentage(inputText)
+    featureList['upper_case_characters_percentage'] = upperCaseCharactersPercentage(inputText)
     ## GROUP 3
-    featureList.extend(frequencyOfSpecialCharacters(inputText))
-    ## GROUP 4
-    featureList.extend(frequencyOfLetters(inputText))
-    ## GROUP 5
-    featureList.extend(frequencyOfDigits(inputText))
-    ## GROUP 6
-    featureList.extend(mostCommonLetterBigrams(inputText))
-    ## GROUP 7
-    featureList.extend(mostCommonLetterTrigrams(inputText))
-    ## GROUP 8
-    featureList.extend(legomena(inputText))
-    ## GROUP 9
-    featureList.extend(functionWordsPercentage(inputText))
-    ## GROUP 10
-    featureList.extend(posTagFrequency(inputText))
-    ## GROUP 11
-    featureList.extend(frequencyOfPunctuationCharacters(inputText))
+    featureList.update(frequencyOfSpecialCharacters(inputText))
+    # ## GROUP 4
+    featureList.update(frequencyOfLetters(inputText))
+    # ## GROUP 5
+    featureList.update(frequencyOfDigits(inputText))
+    # ## GROUP 6
+    featureList.update(mostCommonLetterBigrams(inputText))
+    # ## GROUP 7
+    featureList.update(mostCommonLetterTrigrams(inputText))
+    # ## GROUP 8
+    featureList.update(legomena(inputText))
+    # ## GROUP 9
+    featureList.update(functionWordsPercentage(inputText))
+    # ## GROUP 10
+    featureList.update(posTagFrequency(inputText))
+    # ## GROUP 11
+    featureList.update(frequencyOfPunctuationCharacters(inputText))
 
+    featureList = SortedDict(featureList)
+    featureList = list(featureList.items())
     return featureList
 ######################################## TRAINING CLASSIFIER ###########################
