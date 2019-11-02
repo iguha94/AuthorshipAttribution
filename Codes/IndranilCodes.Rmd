@@ -8,12 +8,24 @@ output: html_notebook
 OriginalCSV = readLines("AllFeatures.csv")
 skipHeader = OriginalCSV[-c(1,2)]
 AllVariables = read.csv(textConnection(skipHeader), header = FALSE, stringsAsFactors = FALSE)
-FeatureSet = AllVariables[,-c(34,36,45,114,149,176,186,271,289,298,332,333,336,380,410,392,526,535)]
+DataFrame=AllVariables[,c(31,32,33,35,37,38,39,40,41,42,43,44,46,47,48,139,140,305,535)]
+FeatureSet = DataFrame[,-c(19)]
+AuthorSet = DataFrame[,c(19)]
 ```
 
-#PCA of the Feature Set
+#Scatter Plots of first 6 predictors
 
 ```{r}
-PCA <- prcomp(FeatureSet, center = TRUE,scale. = TRUE)
+plot(FeatureSet[1:6])
+```
+
+#Scatter Plots of next 6 predictors
+```{r}
+plot(FeatureSet[7:12])
+```
+
+#Scatter Plots of last 6 predictors
+```{r}
+plot(FeatureSet[12:18])
 ```
 
