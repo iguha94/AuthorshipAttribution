@@ -3,8 +3,17 @@ title: "Indranil's Codes"
 output: html_notebook
 ---
 
+# Read Feature Set from CSV 
+```{r}
+OriginalCSV = readLines("AllFeatures.csv")
+skipHeader = OriginalCSV[-c(1,2)]
+AllVariables = read.csv(textConnection(skipHeader), header = FALSE, stringsAsFactors = FALSE)
+FeatureSet = AllVariables[,-c(34,36,45,114,149,176,186,271,289,298,332,333,336,380,410,392,526,535)]
+```
+
+#PCA of the Feature Set
 
 ```{r}
-plot()
+PCA <- prcomp(FeatureSet, center = TRUE,scale. = TRUE)
 ```
 
