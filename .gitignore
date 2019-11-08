@@ -1,3 +1,5 @@
-*.n.htmlb
+*.nb.html
 .idea/
+.RData
+.Rhistory
 

@@ -3,29 +3,54 @@ title: "Indranil's Codes"
 output: html_notebook
 ---
 
+```{r}
+library(MASS)
+library(dplyr)
+library(topicmodels)
+```
+
+
 # Read Feature Set from CSV 
 ```{r}
 OriginalCSV = readLines("AllFeatures.csv")
 skipHeader = OriginalCSV[-c(1,2)]
 AllVariables = read.csv(textConnection(skipHeader), header = FALSE, stringsAsFactors = FALSE)
 DataFrame=AllVariables[,c(31,32,33,35,37,38,39,40,41,42,43,44,46,47,48,139,140,305,535)]
-FeatureSet = DataFrame[,-c(19)]
-AuthorSet = DataFrame[,c(19)]
+
+trainindex <- sample(1:9999,7500,replace=FALSE) # 75-25 split
+testindex <- setdiff(1:9999,trainindex)
+trainMat <- DataFrame[trainindex,]
+testMat <- DataFrame[testindex,]
+trainFeature <- trainMat[,-c(19)]
+testFeature <- testMat[,-c(19)]
+trainAuthors = trainMat[,c(19)]
+testAuthors = testMat[,c(19)]
 ```
 
 #Scatter Plots of first 6 predictors
 
 ```{r}
-plot(FeatureSet[1:6])
+plot(trainFeature[1:9])
 ```
 
 #Scatter Plots of next 6 predictors
 ```{r}
-plot(FeatureSet[7:12])
+plot(trainFeature[10:18])
 ```
 
-#Scatter Plots of last 6 predictors
+#QDA Analysis
+
 ```{r}
-plot(FeatureSet[12:18])
+library(heuristica)
+model_QDA = qda(V535~., data = trainMat)
+summary(model_QDA)
+predictions_QDA = data.frame(predict(model_QDA,testMat))
+probs <- predict(model_QDA,testMat,type="response")
+t<-table(probs$class,testMat$V535)
+t[3,]
+```
+
+```{r}
+
 ```
 
