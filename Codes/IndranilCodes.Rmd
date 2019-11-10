@@ -7,15 +7,24 @@ output: html_notebook
 library(MASS)
 library(dplyr)
 library(topicmodels)
+library(ISLR)
+library(car)
+library(carData)
+library(class)
+library(glmnet)
+library(pls)
+library(ggplot2)
+library(autoplotly)
 ```
 
 
 # Read Feature Set from CSV 
 ```{r}
 OriginalCSV = readLines("AllFeatures.csv")
-skipHeader = OriginalCSV[-c(1,2)]
-AllVariables = read.csv(textConnection(skipHeader), header = FALSE, stringsAsFactors = FALSE)
-DataFrame=AllVariables[,c(31,32,33,35,37,38,39,40,41,42,43,44,46,47,48,139,140,305,535)]
+skipHeader = OriginalCSV[-c(2)]
+AllVariables = read.csv(textConnection(skipHeader), header = TRUE, stringsAsFactors = FALSE)
+DataFrame=AllVariables[,c(31,32,33,35,37,38,39,40,41,42,43,44,46,47,48,92,139,448,535)]
+
 
 trainindex <- sample(1:9999,7500,replace=FALSE) # 75-25 split
 testindex <- setdiff(1:9999,trainindex)
@@ -27,15 +36,11 @@ trainAuthors = trainMat[,c(19)]
 testAuthors = testMat[,c(19)]
 ```
 
-#Scatter Plots of first 6 predictors
+#Scatter Plots 
 
 ```{r}
-plot(trainFeature[1:9])
-```
-
-#Scatter Plots of next 6 predictors
-```{r}
-plot(trainFeature[10:18])
+png('allplots.png',width=1000,height=1000)
+pairs(DataFrame[0:18])
 ```
 
 #QDA Analysis
@@ -47,10 +52,18 @@ summary(model_QDA)
 predictions_QDA = data.frame(predict(model_QDA,testMat))
 probs <- predict(model_QDA,testMat,type="response")
 t<-table(probs$class,testMat$V535)
-t[3,]
+t
+t[3,3]
+```
+
+#PCA
+```{r}
+pcr=prcomp(trainMat[,c(1:18)], center = TRUE,scale. = TRUE)
+summary(pcr)
 ```
 
 ```{r}
-
+PCAPlot <- autoplot(pcr, data = trainMat,colour = trainMat$Author_id,frame = TRUE,frame.colour = trainMat$Author_id,loadings=TRUE,loadings.colour = 'brown',loadings.label = TRUE, loadings.label.size = 3)+ geom_point(color='darkblue')
+PCAPlot
 ```
 
