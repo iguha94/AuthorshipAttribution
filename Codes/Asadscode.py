@@ -61,11 +61,11 @@ from sklearn.metrics import accuracy_score
 from sklearn import preprocessing
 import eli5
 from itertools import combinations
-
+plt.rcParams["font.family"] = "Times New Roman"
 all_data = pd.read_csv('AllFeatures.csv', index_col=False)
 req_data = all_data[
     ['ADJ', 'ADP', 'ADV', 'CCONJ', 'DET', 'INTJ', 'NOUN', 'NUM', 'PART', 'PRON', 'PROPN', 'PUNCT', 'SPACE', 'SYM',
-     'VERB', 'average_word_length', 'digits_percentage', 'total_words', 'Author_Id']]
+     'VERB', 'avgWordLen', 'digits %', 'tot.words', 'Author_Id']]
 
 """
     description:
@@ -101,25 +101,37 @@ for authors_to_pick in options:
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=137, stratify=y)
 
-    svm = RandomForestClassifier()
+    svm = LinearSVC()
     svm.fit(X_train, y_train)
 
-    feature_weights = svm.feature_importances_
+    feature_weights = svm.coef_.ravel()
     print(accuracy_score(y_test, svm.predict(X_test)))
     all_feature_weights.append(feature_weights)
 print(all_feature_weights)
 all_feature_weights = np.asarray(all_feature_weights)
 feature_weights = np.mean(all_feature_weights, axis = 0)
-
+# features_na = list(set(features_names))
+# print(features_na)
+# uppd_features = []
+# for i in range(len(features_na)):
+#     fea = features_na[i]
+#     if fea == 'average_word_length':
+#         uppd_features.append('avgWordLen')
+#     elif fea == 'total_words':
+#         uppd_features.append('tot.Words')
+#     elif fea == 'digits_percentage':
+#         uppd_features.append('digits %')
+#     else:
+#         uppd_features.append(fea)
 def plotit(name):
     x = np.arange(18)
     money = feature_weights
-
+    plt.figure(figsize=(60, 30))
     fig, ax = plt.subplots()
     plt.bar(x, money)
-    plt.xticks(x, set(features_names),fontsize=30)
+    plt.xticks(x, features_names,fontsize=30)
     plt.yticks(fontsize=30)
-    plt.xticks(rotation=90)
+    plt.xticks(rotation=35)
     plt.ylim(-1, 1)
     plt.title(name, fontsize=30)
     fig.set_size_inches(25.5, 15.5)
